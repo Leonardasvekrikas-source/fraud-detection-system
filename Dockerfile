@@ -12,7 +12,7 @@
 #
 # Installs the lean serving extra (no TensorFlow). If the bundle contains an
 # LSTM it loads LightGBM-only (P2 disabled); to enable full fusion in-container,
-# add `tensorflow~=2.17` to the pip install below.
+# change the pip target to ".[serve,lstm]" (much larger image).
 
 FROM python:3.12-slim
 
@@ -20,6 +20,11 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     MODEL_DIR=/app/artifacts/model \
     PORT=7860
+
+# libgomp1: OpenMP runtime required by LightGBM (missing from python:3.12-slim).
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

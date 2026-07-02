@@ -76,8 +76,9 @@ Edit the `<REPO>` link in `README.md` to point at the GitHub repo.
 
 > The lean image has no TensorFlow, so the demo runs in `lightgbm_only` mode (probability +
 > SHAP + single-model verdict). To show the full Algorithm-1 fusion verdict, train with the
-> LSTM (`fraud-detect train --save artifacts/model`) and add `tensorflow~=2.17` to the
-> Dockerfile's pip install — a heavier image, but the complete decision-level fusion.
+> LSTM (`pip install -e ".[lstm]"` then `fraud-detect train --save artifacts/model`) and change
+> the Dockerfile's pip target to `.[serve,lstm]` — a heavier image, but the complete
+> decision-level fusion.
 
 ---
 

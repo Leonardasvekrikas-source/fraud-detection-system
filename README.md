@@ -77,10 +77,12 @@ Requires **Python 3.12**.
 git clone <repo-url>
 cd "Fraud detection system"
 
-# 2. Install (editable, with dev tools)
+# 2. Install (editable). Add extras as needed:
+#      [dev]  tests+lint   [lstm]  TensorFlow for Subsystem 2 / full-fusion training
+#      [serve]  FastAPI+SHAP demo (lean, no TF)
 python -m venv .venv
 . .venv/Scripts/activate            # Windows;  use .venv/bin/activate on macOS/Linux
-pip install -e ".[dev]"
+pip install -e ".[dev,lstm]"        # LightGBM-only work needs just ".[dev]"
 
 # 3. Fetch the public datasets (Kaggle) into data/
 python scripts/fetch_data.py --dataset european

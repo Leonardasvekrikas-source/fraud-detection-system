@@ -12,23 +12,28 @@ license = { text = "MIT" }
 authors = [{ name = "Leonardas Vekrikas" }]
 keywords = ["fraud-detection", "lightgbm", "lstm", "shap", "mlops", "explainable-ai"]
 
-# Core dependencies needed to train and evaluate the pipeline (Phase 0).
-# Pinned with compatible-release (~=) so patch/minor updates are allowed but
-# majors are held back for reproducibility. Tested on Python 3.12.
+# Core dependencies for the LightGBM subsystem + shared preprocessing/evaluation.
+# TensorFlow is intentionally NOT here (it's the `lstm` extra) so the serving
+# image and the LightGBM path stay lean. Pinned with compatible-release (~=):
+# patch/minor allowed, majors held back for reproducibility. Tested on 3.12.
 dependencies = [
     "numpy~=2.1",
     "pandas~=2.2",
     "scikit-learn~=1.5",
     "imbalanced-learn~=0.12",
     "lightgbm~=4.5",
-    "tensorflow~=2.17",       # LSTM subsystem (CPU is fine)
     "pyyaml~=6.0",
     "joblib~=1.4",
     "matplotlib~=3.9",
 ]
 
 [project.optional-dependencies]
-# Phase 1 — serving + explainability demo
+# LSTM subsystem (Subsystem 2) + full-fusion training. Heavy (~1GB); only needed
+# to run `evaluate --subsystem 2` or train a model with the LSTM. CPU is fine.
+lstm = [
+    "tensorflow~=2.17",
+]
+# Phase 1 — lean serving + explainability demo (no TensorFlow).
 serve = [
     "fastapi~=0.115",
     "uvicorn[standard]~=0.30",
