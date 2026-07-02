@@ -1,5 +1,9 @@
 # Real-Time Explainable Fraud Detection — LightGBM · LSTM · SHAP
 
+[![CI](https://github.com/Leonardasvekrikas-source/fraud-detection-system/actions/workflows/ci.yml/badge.svg)](https://github.com/Leonardasvekrikas-source/fraud-detection-system/actions/workflows/ci.yml)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 > A real-time, explainable credit-card fraud detection service, and the engineering study
 > behind its architecture. Not "deploy my model" — an argument, with a deployed system as the proof.
 
