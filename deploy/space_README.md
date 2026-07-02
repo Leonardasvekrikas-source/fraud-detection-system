@@ -17,4 +17,4 @@ features. LightGBM + (optional) LSTM under a decision-level fusion design.
 Paste a transaction → probability, verdict (Normal / Fraud / Expert-Checking), and the
 feature contributions behind it.
 
-**Code & write-up:** https://github.com/Leonardasvekrikas-source/<REPO>
+**Code & write-up:** https://github.com/Leonardasvekrikas-source/fraud-detection-system
