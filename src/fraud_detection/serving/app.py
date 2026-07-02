@@ -1,0 +1,173 @@
+# =============================================================================
+# serving/app.py  -  Phase 1 real-time explainable scoring API.
+#
+# A FastAPI service that loads a persisted ModelBundle and, for a transaction,
+# returns: the fraud probability, the decision-level fusion verdict
+# (Normal / Fraud / Expert-Checking), and a SHAP explanation of the top
+# contributing features.
+#
+#   uvicorn fraud_detection.serving.app:app --port 7860
+#
+# The model directory is taken from $MODEL_DIR (default: artifacts/model). The
+# app starts even if no model is present yet (endpoints return 503 until one
+# is), so the container is deployable before training completes.
+# =============================================================================
+
+from __future__ import annotations
+
+import os
+
+import numpy as np
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
+
+from fraud_detection import config
+from fraud_detection.artifacts.store import ModelBundle
+from fraud_detection.fusion import engine
+from fraud_detection.serving.explain import LightGBMExplainer
+from fraud_detection.serving.ui import DEMO_HTML
+
+DEFAULT_MODEL_DIR = "artifacts/model"
+
+
+class ScoreRequest(BaseModel):
+    # Either a name->value mapping or an ordered list matching raw_feature_columns.
+    features: dict[str, float] | list[float]
+    top_k: int = 8
+
+
+def _build_raw_row(features, raw_cols: list[str]) -> np.ndarray:
+    """Turn the request payload into a (1, n_raw_features) array in column order."""
+    if isinstance(features, dict):
+        missing = [c for c in raw_cols if c not in features]
+        if missing:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Missing features (need all {len(raw_cols)}): {missing[:12]}"
+                + (" ..." if len(missing) > 12 else ""),
+            )
+        return np.array([[float(features[c]) for c in raw_cols]], dtype=float)
+
+    # list form
+    if len(features) != len(raw_cols):
+        raise HTTPException(
+            status_code=422,
+            detail=f"Expected {len(raw_cols)} feature values, got {len(features)}.",
+        )
+    return np.array([features], dtype=float)
+
+
+def create_app(bundle: ModelBundle | None = None, model_dir: str | None = None) -> FastAPI:
+    """Build the FastAPI app. Inject a bundle for tests, or load from disk."""
+    app = FastAPI(
+        title="Explainable Fraud Detection",
+        version="0.1.0",
+        description="LightGBM-LSTM decision-level fusion with SHAP explanations.",
+    )
+
+    load_error: str | None = None
+    if bundle is None:
+        target = model_dir or os.environ.get("MODEL_DIR", DEFAULT_MODEL_DIR)
+        try:
+            bundle = ModelBundle.load(target, with_lstm=True)
+            print(f"[serving] loaded model bundle from {target}")
+        except Exception as exc:  # noqa: BLE001 - report any load failure to /health
+            load_error = f"{type(exc).__name__}: {exc}"
+            print(f"[serving] no model loaded ({load_error}); /score will return 503.")
+
+    explainer = None
+    if bundle is not None:
+        feature_names = bundle.metadata.get("selected_features") or [
+            f"f{i}" for i in range(bundle.lightgbm.n_features_in_)
+        ]
+        explainer = LightGBMExplainer(bundle.lightgbm, feature_names)
+
+    app.state.bundle = bundle
+    app.state.explainer = explainer
+    app.state.load_error = load_error
+    app.state.theta = (
+        float(bundle.metadata.get("theta", config.INFERENCE_THETA))
+        if bundle is not None
+        else config.INFERENCE_THETA
+    )
+
+    def _require_model() -> ModelBundle:
+        if app.state.bundle is None:
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "No model loaded. Train and persist one with "
+                    "`fraud-detect train --save artifacts/model`, then set "
+                    f"$MODEL_DIR. (load error: {app.state.load_error})"
+                ),
+            )
+        return app.state.bundle
+
+    @app.get("/health")
+    def health() -> dict:
+        b = app.state.bundle
+        return {
+            "status": "ok",
+            "model_loaded": b is not None,
+            "has_lstm": (b is not None and b.lstm is not None),
+            "mode": "fusion" if (b is not None and b.lstm is not None) else "lightgbm_only",
+            "load_error": app.state.load_error,
+        }
+
+    @app.get("/schema")
+    def schema() -> dict:
+        b = _require_model()
+        return {
+            "raw_feature_columns": b.metadata.get("raw_feature_columns", []),
+            "selected_features": b.metadata.get("selected_features", []),
+            "theta": app.state.theta,
+            "window_size": b.metadata.get("window_size", config.WINDOW_SIZE),
+        }
+
+    @app.post("/score")
+    def score(req: ScoreRequest) -> dict:
+        b = _require_model()
+        raw_cols = b.metadata.get("raw_feature_columns", [])
+        if not raw_cols:
+            raise HTTPException(500, "Model metadata has no raw_feature_columns.")
+
+        X_raw = _build_raw_row(req.features, raw_cols)
+
+        p1 = float(b.predict_p1(X_raw)[0])
+        x_selected = b.transform_features(X_raw)[0]
+        explanation = app.state.explainer.explain_row(x_selected, top_k=req.top_k)
+
+        theta = app.state.theta
+        if b.lstm is not None:
+            p2 = float(b.predict_p2(X_raw)[0])
+            decision = engine.classify_single(p1, p2, theta=theta)
+            p_sum = p1 + p2
+            mode = "fusion"
+        else:
+            # LightGBM-only build: full Algorithm 1 needs P2. Report a single-model
+            # verdict at the standard 0.5 threshold and label the mode honestly.
+            p2 = None
+            decision = engine.LABEL_FRAUD if p1 >= 0.5 else engine.LABEL_NORMAL
+            p_sum = p1
+            mode = "lightgbm_only"
+
+        return {
+            "decision": decision,
+            "mode": mode,
+            "p1": round(p1, 6),
+            "p2": (round(p2, 6) if p2 is not None else None),
+            "p_sum": round(p_sum, 6),
+            "theta": theta,
+            "explanation": explanation,
+        }
+
+    @app.get("/", response_class=HTMLResponse)
+    def home() -> str:
+        return DEMO_HTML
+
+    return app
+
+
+# Module-level app for `uvicorn fraud_detection.serving.app:app`.
+app = create_app()
