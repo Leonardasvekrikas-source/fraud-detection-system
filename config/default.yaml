@@ -1,0 +1,66 @@
+# =============================================================================
+# config/default.yaml
+#
+# Central configuration for the fraud detection system — the single source of
+# truth for hyperparameters. All values are taken directly from:
+#   Yousefimehr, B. & Ghatee, M. (2025). "A distribution-preserving method for
+#   resampling combined with LightGBM-LSTM for sequence-wise fraud detection in
+#   credit card transactions." Expert Systems with Applications, 262, 125661.
+#
+# src/fraud_detection/config.py loads this file. To run an experiment with
+# different values, copy this file, edit it, and point FRAUD_DETECTION_CONFIG
+# at the copy (or pass --config to the CLI).
+# =============================================================================
+
+# --- Dataset (adjust per dataset) --------------------------------------------
+LABEL_COL: "Class"     # column holding the class label
+FRAUD_LABEL: 1         # value meaning "fraud" (minority)
+NORMAL_LABEL: 0        # value meaning "normal" (majority)
+
+# --- Cross-validation (paper Section 2.1.2) ----------------------------------
+N_SPLITS: 5
+RANDOM_STATE: 42
+SS1_TEST_SIZE: 0.3     # Subsystem 1 ShuffleSplit test size
+SEQ_Q_PERCENT: 0.30    # Subsystem 2 "last q% as test" protocol
+
+# --- F2Vote feature selection (paper Section 2.2) ----------------------------
+F2VOTE_MIN_VOTES: 2        # keep features chosen by >= 2 of the 6 methods
+F2VOTE_K_PER_METHOD: null  # null -> auto: n_features // 2
+
+# --- OCSVM (used in HybridOS and HybridUS; paper Section 2.3) -----------------
+OCSVM_KERNEL: "rbf"
+OCSVM_NU: 0.1
+
+# --- Resampling target (paper Tables 4 & 5: best at 5% fraud) ----------------
+TARGET_FRAUD_RATIO: 0.05
+
+# --- LightGBM hyperparameters (Subsystem 1; paper Table A.14) ----------------
+LGBM_PARAMS:
+  colsample_bytree: 0.7
+  learning_rate: 0.01
+  max_bin: 100
+  max_depth: 16
+  min_child_samples: 100
+  min_child_weight: 0.001
+  n_estimators: 5000
+  num_leaves: 1000
+  objective: "binary"
+  metric: "binary_logloss"
+  verbose: -1
+  random_state: 42
+
+# --- LSTM hyperparameters (Subsystem 2; paper Table A.15) --------------------
+LSTM_UNITS: 50
+LSTM_OPTIMIZER: "adam"
+LSTM_LOSS: "binary_crossentropy"
+LSTM_EPOCHS: 10
+LSTM_BATCH_SIZE: 512
+LSTM_RANDOM_STATE: 42
+
+# --- Sliding window (Subsystem 2; paper Section 2.4 / Fig. 7) ----------------
+WINDOW_SIZE: 3          # recommended value for the European dataset
+AUTO_TUNE_WINDOW: false # true -> run the Fig. 7 window-size search at startup
+WINDOW_SIZE_MAX: 10
+
+# --- Inference engine / decision-level fusion (Algorithm 1; Section 2.6) -----
+INFERENCE_THETA: 0.5    # theta: Normal < theta <= Expert-Checking < 1+theta <= Fraud

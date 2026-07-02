@@ -1,0 +1,45 @@
+# ---- Data (large, public — fetched via scripts/fetch_data.py, never committed) ----
+data/*.csv
+data/*.zip
+data/*.parquet
+
+# ---- Trained model artifacts ----
+artifacts/
+*.joblib
+*.keras
+*.h5
+
+# ---- Experiment tracking / monitoring output ----
+mlruns/
+mlartifacts/
+reports/*.html
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# ---- Virtual environments ----
+.venv/
+venv/
+env/
+
+# ---- Pre-migration thesis code + experiment variants (kept locally for
+#      reference during migration; not part of the shipped repo). ----
+/System/
+/system_full/
+/system_fusion/
+/system_XAI/
+/system_F2Full/
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,7 @@
+# Normalise line endings to LF in the repo (checked out per-OS).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.gif binary
+*.joblib binary
+*.keras binary

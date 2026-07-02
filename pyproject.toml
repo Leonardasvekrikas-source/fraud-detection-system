@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fraud-detection-system"
+version = "0.1.0"
+description = "Real-time, explainable LightGBM-LSTM fraud detection — an engineering study of decision-level vs feature-level fusion."
+readme = "README.md"
+requires-python = "==3.12.*"
+license = { text = "MIT" }
+authors = [{ name = "Leonardas Vekrikas" }]
+keywords = ["fraud-detection", "lightgbm", "lstm", "shap", "mlops", "explainable-ai"]
+
+# Core dependencies needed to train and evaluate the pipeline (Phase 0).
+# Pinned with compatible-release (~=) so patch/minor updates are allowed but
+# majors are held back for reproducibility. Tested on Python 3.12.
+dependencies = [
+    "numpy~=2.1",
+    "pandas~=2.2",
+    "scikit-learn~=1.5",
+    "imbalanced-learn~=0.12",
+    "lightgbm~=4.5",
+    "tensorflow~=2.17",       # LSTM subsystem (CPU is fine)
+    "pyyaml~=6.0",
+    "joblib~=1.4",
+    "matplotlib~=3.9",
+]
+
+[project.optional-dependencies]
+# Phase 1 — serving + explainability demo
+serve = [
+    "fastapi~=0.115",
+    "uvicorn[standard]~=0.30",
+    "shap~=0.46",
+    "lime~=0.2.0.1",
+]
+# Phase 2 — tracked experiments
+experiments = [
+    "mlflow~=2.16",
+]
+# Developer tooling
+dev = [
+    "pytest~=8.3",
+    "ruff~=0.6",
+]
+
+[project.scripts]
+fraud-detect = "fraud_detection.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+fraud_detection = ["py.typed"]
+
+# ---------------------------------------------------------------------------
+# Tooling
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# A pragmatic, non-pedantic set: pyflakes, pycodestyle, isort, bugbear, pyupgrade.
+select = ["E", "F", "I", "B", "UP", "W"]
+ignore = [
+    "E501",  # line length is handled by the formatter, not the linter
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
