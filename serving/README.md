@@ -6,7 +6,8 @@ of the top contributing features — the explainability payoff of keeping the tw
 separable (exact, fast `TreeExplainer` on the LightGBM component).
 
 Code lives in the package: [`src/fraud_detection/serving/`](../src/fraud_detection/serving/)
-(`app.py`, `explain.py`, `ui.py`). This folder holds the deployment assets (`Dockerfile`).
+(`app.py`, `explain.py`, `ui.py`). The container image is defined by the root
+[`Dockerfile`](../Dockerfile); step-by-step deployment is in [`DEPLOY.md`](../DEPLOY.md).
 
 ## Run locally
 
@@ -35,7 +36,7 @@ MODEL_DIR=artifacts/model uvicorn fraud_detection.serving.app:app --port 7860
 ## Deploy (Hugging Face Spaces, Docker SDK)
 
 ```bash
-docker build -f serving/Dockerfile -t fraud-demo .   # context = repo root
+docker build -t fraud-demo .        # from the repo root
 docker run -p 7860:7860 fraud-demo
 ```
 

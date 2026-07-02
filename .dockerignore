@@ -1,0 +1,36 @@
+# Keep the build context lean — only what serving/Dockerfile actually needs
+# (pyproject, README, src/, config/, artifacts/) reaches the daemon.
+
+.git/
+.venv/
+venv/
+env/
+
+# Pre-migration code + experiment variants (large, irrelevant to serving)
+System/
+system_full/
+system_fusion/
+system_XAI/
+system_F2Full/
+
+# Datasets (144MB+; not needed in the serving image)
+data/
+
+# Not needed at runtime
+tests/
+notebooks/
+docs/
+experiments/
+monitoring/
+airflow/
+
+# Caches / build cruft
+**/__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+build/
+dist/
+mlruns/
