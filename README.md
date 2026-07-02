@@ -29,8 +29,8 @@ This project ships in public phases. Current state:
 
 | Phase | What | Status |
 |------|------|--------|
-| 0 | Reproducible core: config-driven training + evaluation of the pipeline, one command | 🟡 in progress |
-| 1 | Real-time explainable FastAPI service + SHAP explanation + demo UI, Dockerised, deployed | ⬜ not started |
+| 0 | Reproducible core: config-driven training + evaluation of the pipeline, one command | 🟢 code-complete (real-data parity check pending) |
+| 1 | Real-time explainable FastAPI service + SHAP explanation + demo UI, Dockerised | 🟢 built & tested (live deploy pending a trained model) |
 | 2 | Fusion comparison + cost/threshold analysis + PaySim generalization, tracked in MLflow | ⬜ not started |
 | 3 | Drift monitoring (Evidently, *simulated*), Airflow retraining DAG (docker-compose), CI | ⬜ not started |
 | 4 | Technical write-up linking the live demo and code | ⬜ not started |
