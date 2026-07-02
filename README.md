@@ -29,7 +29,7 @@ This project ships in public phases. Current state:
 
 | Phase | What | Status |
 |------|------|--------|
-| 0 | Reproducible core: config-driven training + evaluation of the pipeline, one command | 🟢 code-complete (real-data parity check pending) |
+| 0 | Reproducible core: config-driven training + evaluation of the pipeline, one command | 🟢 Subsystem 1 reproduced **exactly** on real data ✓; LSTM parity check pending |
 | 1 | Real-time explainable FastAPI service + SHAP explanation + demo UI, Dockerised | 🟢 built & tested (live deploy pending a trained model) |
 | 2 | Fusion comparison + cost/threshold analysis + PaySim generalization, tracked in MLflow | ⬜ not started |
 | 3 | Drift monitoring (Evidently, *simulated*), Airflow retraining DAG (docker-compose), CI | ⬜ not started |
@@ -56,7 +56,9 @@ paper's reported figures. These reproduce the thesis behind this project.
 Second-dataset evidence (PaySim, single held-out split) and the fusion-strategy comparison are
 summarised in [`docs/`](docs/) and will move into tracked MLflow experiments in Phase 2.
 
-> Numbers are read directly from the thesis; the pipeline here is the code that produced them.
+> The LightGBM row has been **independently reproduced by this repository's code** on the real
+> dataset — an exact match to the thesis figures (deterministic, seed 42). The LSTM row is
+> transcribed from the thesis pending a local re-run.
 > The LSTM's lower recall traces to a documented `HybridUS` edge case under extreme imbalance
 > (the undersampling budget is exhausted by distribution-protected samples), not an
 > implementation error — see [`docs/`](docs/).
