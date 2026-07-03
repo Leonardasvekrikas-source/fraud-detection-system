@@ -3,8 +3,9 @@ data/*.csv
 data/*.zip
 data/*.parquet
 
-# ---- Trained model artifacts ----
-artifacts/
+# ---- Trained model artifacts (root output dir only — NOT the source package
+#      src/fraud_detection/artifacts/, hence the leading slash) ----
+/artifacts/
 *.joblib
 *.keras
 *.h5
