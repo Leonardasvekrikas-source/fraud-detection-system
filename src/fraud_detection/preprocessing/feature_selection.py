@@ -173,9 +173,9 @@ class F2VoteSelector:
 
     def _method_rfe(self, X, y, k):
         """Method 2: Recursive Feature Elimination (Section 2.2 #2)."""
-        estimator = LogisticRegression(
-            max_iter=1000, random_state=self.random_state, n_jobs=-1
-        )
+        # note: no n_jobs here — it has no effect on LogisticRegression and is
+        # deprecated (removed in scikit-learn 1.10).
+        estimator = LogisticRegression(max_iter=1000, random_state=self.random_state)
         rfe = RFE(estimator=estimator, n_features_to_select=k, step=1)
         rfe.fit(X, y)
         return rfe.support_, "2_RFE_(LogisticRegression)"
