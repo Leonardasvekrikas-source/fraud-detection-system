@@ -35,7 +35,7 @@ This project ships in public phases. Current state:
 |------|------|--------|
 | 0 | Reproducible core: config-driven training + evaluation of the pipeline, one command | 🟢 **both subsystems reproduced on real data** ✓ (LightGBM exact; LSTM within run-to-run noise) |
 | 1 | Real-time explainable FastAPI service + SHAP explanation + demo UI, Dockerised | 🟢 built & tested (live deploy pending a trained model) |
-| 2 | Fusion comparison + cost/threshold analysis + PaySim generalization, tracked in MLflow | ⬜ not started |
+| 2 | Fusion comparison + cost/threshold analysis + PaySim generalization, tracked in MLflow | 🟢 done — 3 MLflow experiments ([experiments/](experiments/)) |
 | 3 | Drift monitoring (Evidently, *simulated*), Airflow retraining DAG (docker-compose), CI | ⬜ not started |
 | 4 | Technical write-up linking the live demo and code | ⬜ not started |
 
@@ -57,8 +57,10 @@ paper's reported figures. These reproduce the thesis behind this project.
 | Recall | 0.8092 ± 0.0256 | 0.9209 | 0.6729 ± 0.0895 | 0.7846 |
 | MCC | 0.8518 ± 0.0131 | 0.8815 | 0.7841 ± 0.0537 | 0.8323 |
 
-Second-dataset evidence (PaySim, single held-out split) and the fusion-strategy comparison are
-summarised in [`docs/`](docs/) and will move into tracked MLflow experiments in Phase 2.
+The fusion-strategy comparison, the threshold-as-cost analysis, and the PaySim generalization run
+are **reproducible, MLflow-tracked experiments** — see [`experiments/`](experiments/) for the
+result tables, plots, and the honest findings (including feature-level fusion's collapse and
+where the LSTM under-performs).
 
 > Both rows are **reproduced by this repository's code** on the real dataset. LightGBM matches
 > the thesis exactly (deterministic, seed 42). A fresh LSTM re-run gave F1 0.743 / AUC 0.951 /
