@@ -37,7 +37,12 @@ backbone of the project's argument: **decision-level fusion is the better produc
 `threshold_cost.py` sweeps the LightGBM threshold and, for a range of cost ratios
 `R = cost(false negative) / cost(false positive)`, finds the expected-cost-minimising operating
 point — reframing the PR curve as a business decision (fraud loss vs false-alarm friction).
-See `experiments/results/threshold_cost.{csv,png}`.
+
+**Finding.** As a missed fraud grows costlier, the optimal threshold drops sharply (0.21 → 0.002)
+— but recall plateaus at ~0.79: a residual ~23 frauds are scored near-zero by LightGBM and can't
+be recovered by *any* threshold. That ceiling is exactly the case for the sequential (LSTM)
+signal and the Expert-Checking tier — threshold tuning alone can't catch them. See
+`experiments/results/threshold_cost.{csv,png}`.
 
 ## 3. PaySim generalization — second-dataset evidence 🚧
 
