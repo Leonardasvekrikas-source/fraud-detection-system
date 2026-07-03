@@ -42,7 +42,7 @@ serve = [
 ]
 # Phase 2 — tracked experiments
 experiments = [
-    "mlflow~=2.16",
+    "mlflow>=2.16,<4",
 ]
 # Developer tooling
 dev = [

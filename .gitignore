@@ -12,6 +12,7 @@ artifacts/
 # ---- Experiment tracking / monitoring output ----
 mlruns/
 mlartifacts/
+mlflow.db
 reports/*.html
 
 # ---- Python ----
