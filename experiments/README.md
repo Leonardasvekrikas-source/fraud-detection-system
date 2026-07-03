@@ -44,7 +44,25 @@ be recovered by *any* threshold. That ceiling is exactly the case for the sequen
 signal and the Expert-Checking tier — threshold tuning alone can't catch them. See
 `experiments/results/threshold_cost.{csv,png}`.
 
-## 3. PaySim generalization — second-dataset evidence 🚧
+## 3. PaySim generalization — second-dataset evidence ✅
 
-Planned: run the pipeline on the structurally different PaySim dataset (config override for its
-`isFraud` label + interpretable features) to test whether the architecture generalises.
+`paysim_generalization.py` runs the pipeline on the structurally different PaySim dataset
+(interpretable mobile-money features, not PCA). PaySim-specific preprocessing drops identifier/
+constant columns and one-hot encodes `type`. **Tractability:** PaySim has ~1.05M rows, so only
+the LSTM (whose HybridUS runs OCSVM on the huge normal class) uses a **contiguous** 200k tail
+block — contiguous, so transaction sequences survive; LightGBM's OCSVM runs on the tiny fraud
+class, so it trains on the **full** train split.
+
+| config | precision | recall | F1 | AUC |
+|---|---|---|---|---|
+| LightGBM | 0.735 | 0.706 | 0.721 | 0.992 |
+| LSTM | 0.977 | 0.060 | 0.114 | 0.961 |
+| decision-level fusion | 1.000 | 0.060 | 0.114 | 0.982 |
+
+**Finding.** LightGBM generalises strongly to PaySim — AUC 0.992 and recall 0.706, essentially
+matching the thesis (0.997 / 0.718). The LSTM *ranks* fraud well (AUC 0.96) but is under-confident
+at the 0.5 threshold (low recall): its 200k tail holds only ~195 fraud, and the HybridUS edge
+case leaves it on ~0.1% fraud. This supports the thesis conclusion: the architecture **transfers**,
+but PaySim fraud is more concentrated and **less sequential**, so the tabular (LightGBM) branch
+carries the signal while the sequential branch adds little. This is a tractability-constrained
+*indicator*, not a full faithful reproduction — see the module header for the exact approximations.
