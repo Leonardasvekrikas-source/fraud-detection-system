@@ -15,6 +15,10 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+          # setup-python keys the pip cache off requirements.txt by default;
+          # we use pyproject.toml, so point it there (otherwise the cache step
+          # errors and fails the whole job).
+          cache-dependency-path: pyproject.toml
 
       # TensorFlow (the [lstm] extra) is intentionally not installed: the test
       # suite covers the LightGBM + serving paths and does not need it, which

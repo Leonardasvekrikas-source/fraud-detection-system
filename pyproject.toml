@@ -76,6 +76,11 @@ ignore = [
     "E501",  # line length is handled by the formatter, not the linter
 ]
 
+[tool.ruff.lint.isort]
+# Make first-party classification explicit so import ordering (I001) is
+# deterministic regardless of where/how ruff is invoked.
+known-first-party = ["fraud_detection"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
