@@ -1,0 +1,16 @@
+# Reduced LightGBM config for the Airflow demo DAG — trades a little accuracy for
+# a fast (~1-2 min) end-to-end run so the retrain->promote loop is watchable.
+# The real training config is config/default.yaml (5000 estimators).
+LGBM_PARAMS:
+  colsample_bytree: 0.7
+  learning_rate: 0.05
+  max_bin: 100
+  max_depth: 12
+  min_child_samples: 50
+  min_child_weight: 0.001
+  n_estimators: 150
+  num_leaves: 128
+  objective: "binary"
+  metric: "binary_logloss"
+  verbose: -1
+  random_state: 42

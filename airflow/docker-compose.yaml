@@ -1,0 +1,82 @@
+# Minimal local Airflow (LocalExecutor + Postgres) for the retrain->promote demo.
+# NOT a 24/7 production deployment — you bring it up to run the DAG, then down.
+#
+#   cd airflow
+#   docker compose build
+#   docker compose up airflow-init      # one-time: init DB + create admin user
+#   docker compose up -d                # start webserver + scheduler
+#   # open http://localhost:8080  (login airflow / airflow), trigger 'fraud_retrain_promote'
+#   docker compose down                 # stop (add -v to also wipe the volumes)
+
+x-airflow-common: &airflow-common
+  build:
+    context: ..                         # repo root, so the Dockerfile can COPY src/ config/
+    dockerfile: airflow/Dockerfile
+  environment: &airflow-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+    # paths + reduced config used by the DAG
+    FRAUD_DETECTION_CONFIG: /opt/airflow/config/dag_config.yaml
+    FRAUD_DATA: /opt/airflow/data/creditcard.csv
+    MODELS_DIR: /opt/airflow/models
+    TRAIN_SAMPLE: "40000"
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./config/dag_config.yaml:/opt/airflow/config/dag_config.yaml:ro
+    - ../data:/opt/airflow/data:ro
+    - airflow-models:/opt/airflow/models
+    - airflow-logs:/opt/airflow/logs
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+    restart: unless-stopped
+
+  # One-shot: migrate the DB and create the admin user, then exit.
+  airflow-init:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate
+        airflow users create --username airflow --password airflow \
+          --firstname a --lastname b --role Admin --email admin@example.com || true
+    restart: "no"
+
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      retries: 5
+    restart: unless-stopped
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    restart: unless-stopped
+
+volumes:
+  postgres-db:
+  airflow-models:
+  airflow-logs:
