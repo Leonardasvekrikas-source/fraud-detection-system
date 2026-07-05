@@ -1,14 +1,17 @@
 # Real-Time Explainable Fraud Detection — LightGBM · LSTM · SHAP
 
 [![CI](https://github.com/Leonardasvekrikas-source/fraud-detection-system/actions/workflows/ci.yml/badge.svg)](https://github.com/Leonardasvekrikas-source/fraud-detection-system/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/%F0%9F%A4%97%20live%20demo-Hugging%20Face-yellow)](https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 > A real-time, explainable credit-card fraud detection service, and the engineering study
 > behind its architecture. Not "deploy my model" — an argument, with a deployed system as the proof.
 
+**▶ Live demo:** https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo — paste a transaction, get a fraud probability + verdict + a SHAP explanation of the top contributing features.
+
 <!-- TODO(Phase 1): demo GIF here — paste a transaction → probability + SHAP explanation. -->
-<!-- TODO(Phase 1): live demo link (Hugging Face Spaces). -->
+
 
 **The argument (two sentences).** A *decision-level* fusion of LightGBM and LSTM — keeping the
 two models separate and combining their scores — is the more practical production choice than
@@ -34,7 +37,7 @@ This project ships in public phases. Current state:
 | Phase | What | Status |
 |------|------|--------|
 | 0 | Reproducible core: config-driven training + evaluation of the pipeline, one command | 🟢 **both subsystems reproduced on real data** ✓ (LightGBM exact; LSTM within run-to-run noise) |
-| 1 | Real-time explainable FastAPI service + SHAP explanation + demo UI, Dockerised | 🟢 built & tested (live deploy pending a trained model) |
+| 1 | Real-time explainable FastAPI service + SHAP explanation + demo UI, Dockerised | 🟢 **live on Hugging Face Spaces** |
 | 2 | Fusion comparison + cost/threshold analysis + PaySim generalization, tracked in MLflow | 🟢 done — 3 MLflow experiments ([experiments/](experiments/)) |
 | 3 | Drift monitoring (Evidently, *simulated*), Airflow retraining DAG (docker-compose), CI | ⬜ not started |
 | 4 | Technical write-up linking the live demo and code | ⬜ not started |
@@ -99,7 +102,7 @@ fraud-detect evaluate --subsystem 2        # LSTM branch
 fraud-detect train --save artifacts/       # train once and persist a servable model
 ```
 
-<!-- TODO(Phase 1): live demo link goes here. -->
+**Or skip the setup — try the [live demo](https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo).**
 
 ---
 
