@@ -41,11 +41,11 @@ This project ships in public phases. Current state:
 | 0 | Reproducible core: config-driven training + evaluation of the pipeline, one command | 🟢 **both subsystems reproduced on real data** ✓ (LightGBM exact; LSTM within run-to-run noise) |
 | 1 | Real-time explainable FastAPI service + SHAP explanation + demo UI, Dockerised | 🟢 **live on Hugging Face Spaces** |
 | 2 | Fusion comparison + cost/threshold analysis + PaySim generalization, tracked in MLflow | 🟢 done — 3 MLflow experiments ([experiments/](experiments/)) |
-| 3 | Drift monitoring (Evidently, *simulated*), Airflow retraining DAG (docker-compose), CI | ⬜ not started |
+| 3 | Drift monitoring (Evidently, *simulated*), Airflow retraining DAG (docker-compose), CI | 🟢 done — [monitoring/](monitoring/) + [airflow/](airflow/), CI green |
 | 4 | Technical write-up linking the live demo and code | ⬜ not started |
 
-Folders for later phases (`serving/`, `experiments/`, `monitoring/`, `airflow/`) are present as
-labelled placeholders so the roadmap is visible; they state plainly that they are not yet built.
+`serving/`, `experiments/`, `monitoring/`, and `airflow/` are built out (each with its own README).
+Only the Phase 4 write-up remains.
 
 ---
 
@@ -174,7 +174,10 @@ src/fraud_detection/
   artifacts/       Save/load fitted model + scaler + F2Vote mask
   cli.py           `fraud-detect train | evaluate`
 tests/             pytest suite for the pure-logic modules
-serving/  experiments/  monitoring/  airflow/   Later-phase placeholders (see each README)
+serving/      Phase 1 — FastAPI + SHAP demo (deployed to Hugging Face Spaces)
+experiments/  Phase 2 — MLflow fusion / cost-threshold / PaySim studies + results
+monitoring/   Phase 3 — Evidently drift monitoring (simulated)
+airflow/      Phase 3 — champion/challenger retraining DAG (docker-compose)
 ```
 
 ---
