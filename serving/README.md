@@ -33,6 +33,21 @@ MODEL_DIR=artifacts/model uvicorn fraud_detection.serving.app:app --port 7860
 { "features": { "Time": 0, "V1": -1.36, "V2": -0.07, "...": 0, "Amount": 149.62 }, "top_k": 8 }
 ```
 
+## Performance
+
+Measured in-process (`python -m fraud_detection.serving.benchmark --n 400`):
+
+| | p50 | p95 | p99 |
+|---|---|---|---|
+| **predict only** (LightGBM) | ~2 ms | ~2.5 ms | ~3 ms |
+| **full `/score`** (+ SHAP) | ~0.7 s | ~0.75 s | ~0.76 s |
+
+The prediction is **sub-3 ms**; the **SHAP explanation on a 5000-tree model dominates** (~0.7 s).
+Production implication: score every transaction instantly, and compute the expensive explanation
+only for the ones a human reviews (the Expert-Checking tier) — or trade some trees for latency.
+Load-test the HTTP path with [`locustfile.py`](locustfile.py) (`pip install -e ".[bench]"`, then
+`locust -f serving/locustfile.py --host http://localhost:7860`).
+
 ## Deploy (Hugging Face Spaces, Docker SDK)
 
 ```bash

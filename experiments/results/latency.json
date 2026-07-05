@@ -1,0 +1,17 @@
+{
+  "requests": 400,
+  "predict_only": {
+    "mean_ms": 2.207,
+    "p50_ms": 2.145,
+    "p95_ms": 2.539,
+    "p99_ms": 3.02
+  },
+  "full_score_with_shap": {
+    "mean_ms": 683.271,
+    "p50_ms": 712.493,
+    "p95_ms": 746.371,
+    "p99_ms": 762.411
+  },
+  "explanation_overhead_ms_p50": 710.35,
+  "score_throughput_rps": 1.5
+}

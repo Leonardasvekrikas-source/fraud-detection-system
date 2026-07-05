@@ -48,6 +48,10 @@ experiments = [
 monitoring = [
     "evidently~=0.7",
 ]
+# Load testing the serving API
+bench = [
+    "locust~=2.31",
+]
 # Developer tooling
 dev = [
     "pytest~=8.3",

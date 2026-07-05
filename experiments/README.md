@@ -5,9 +5,11 @@ anyone can regenerate. Tracking uses a local SQLite backend (MLflow 3 retired th
 
 ```bash
 pip install -e ".[lstm,experiments]"
-python -m fraud_detection.experiments.fusion_comparison --data creditcard.csv
-python -m fraud_detection.experiments.threshold_cost   --data creditcard.csv
-mlflow ui --backend-store-uri sqlite:///mlflow.db        # browse runs at :5000
+python -m fraud_detection.experiments.fusion_comparison     --data creditcard.csv
+python -m fraud_detection.experiments.threshold_cost        --data creditcard.csv
+python -m fraud_detection.experiments.calibration           --data creditcard.csv
+python -m fraud_detection.experiments.paysim_generalization --data paysim.csv
+mlflow ui --backend-store-uri sqlite:///mlflow.db           # browse runs at :5000
 ```
 
 Result tables/plots are written to `experiments/results/` and committed as evidence.
@@ -41,10 +43,34 @@ point — reframing the PR curve as a business decision (fraud loss vs false-ala
 **Finding.** As a missed fraud grows costlier, the optimal threshold drops sharply (0.21 → 0.002)
 — but recall plateaus at ~0.79: a residual ~23 frauds are scored near-zero by LightGBM and can't
 be recovered by *any* threshold. That ceiling is exactly the case for the sequential (LSTM)
-signal and the Expert-Checking tier — threshold tuning alone can't catch them. See
-`experiments/results/threshold_cost.{csv,png}`.
+signal and the Expert-Checking tier — threshold tuning alone can't catch them.
 
-## 3. PaySim generalization — second-dataset evidence ✅
+<img src="results/threshold_cost.png" width="480" alt="Cost vs threshold — the optimum shifts with cost(FN)/cost(FP)">
+
+
+## 3. Probability calibration — are the scores trustworthy? ✅
+
+`calibration.py` — fraud teams *act on scores* ("block > 0.9, review 0.5–0.9"), so a score of 0.8
+must mean ~80% of such transactions really are fraud. Our LightGBM is trained on HybridOS-resampled
+data (~5% fraud) while the true base rate is ~0.17%, so its raw probabilities are **inflated**. This
+quantifies it (Brier, ECE) and fixes it with post-hoc **isotonic regression** fit on a held-out slice
+at the true base rate.
+
+| ECE (Expected Calibration Error) | raw | isotonic-calibrated |
+|---|---|---|
+| all transactions | 0.0004 | 0.0002 |
+| **flagged region** (score ≥ 0.05, n=59) | **0.075** | **0.020** |
+
+**Finding — and a rigor point.** The *aggregate* ECE is near-zero and **misleading**: the ~99.8%
+easy negatives (scored ≈0) swamp it. In the **region the model actually acts on**, the raw scores are
+7.5% miscalibrated (resampling inflation); isotonic calibration cuts that ~3.7×. Lesson: on extreme
+imbalance, aggregate calibration metrics hide the problem — measure it where decisions happen.
+
+<img src="results/calibration.png" width="440" alt="Reliability diagram: raw vs isotonic-calibrated">
+
+
+
+## 4. PaySim generalization — second-dataset evidence ✅
 
 `paysim_generalization.py` runs the pipeline on the structurally different PaySim dataset
 (interpretable mobile-money features, not PCA). PaySim-specific preprocessing drops identifier/

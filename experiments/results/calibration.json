@@ -1,0 +1,9 @@
+{
+  "brier_raw": 0.0004147881518629727,
+  "brier_calibrated": 0.0004110894787326529,
+  "ece_raw": 0.0004455396151962278,
+  "ece_calibrated": 0.0001724478523327243,
+  "flagged_n": 59,
+  "ece_raw_flagged": 0.07457593250731674,
+  "ece_calibrated_flagged": 0.02033898305084745
+}

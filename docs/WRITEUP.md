@@ -57,7 +57,7 @@ the difference between a reproduction and a reproduction you understand.
 
 ## 2. The engineering study (the argument, made legible)
 
-With a trustworthy baseline, I ran three tracked experiments (MLflow), each answering a question.
+With a trustworthy baseline, I ran four tracked experiments (MLflow), each answering a question.
 
 ### Feature-level vs decision-level fusion
 
@@ -92,6 +92,17 @@ As a miss gets costlier, the optimal threshold drops (0.21 → 0.002) and recall
 **plateaus around 0.79**: a residual set of frauds is scored near-zero by LightGBM and can't be
 recovered by *any* threshold. That ceiling is exactly the case for the sequential (LSTM) signal
 and the human-review tier — threshold tuning alone won't catch them.
+
+### Are the scores trustworthy? (calibration)
+
+Fraud teams act on *scores*, not just labels — so a predicted 0.8 should mean ~80% of such
+transactions really are fraud. My model is trained on resampled data (~5% fraud) vs a true base
+rate of ~0.17%, which inflates its probabilities. The subtle part: the *aggregate* calibration
+error is a near-zero, **misleading** 0.0004 — the flood of easy negatives (all scored ≈0) swamps
+it. Measured **in the region the model actually flags**, the raw scores are 7.5% miscalibrated;
+post-hoc isotonic calibration (fit at the true base rate) cuts that ~3.7× to 2%. The lesson —
+that aggregate calibration metrics lie under extreme imbalance — is the kind of thing you only
+learn by looking.
 
 ### Does it generalize? (PaySim)
 
