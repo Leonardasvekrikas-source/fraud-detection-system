@@ -15,6 +15,7 @@ mlruns/
 mlartifacts/
 mlflow.db
 reports/*.html
+monitoring/reports/*.html
 
 # ---- Python ----
 __pycache__/

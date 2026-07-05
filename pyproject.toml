@@ -44,6 +44,10 @@ serve = [
 experiments = [
     "mlflow>=2.16,<4",
 ]
+# Phase 3 — drift/quality monitoring
+monitoring = [
+    "evidently~=0.7",
+]
 # Developer tooling
 dev = [
     "pytest~=8.3",
