@@ -10,7 +10,9 @@
 
 **▶ Live demo:** https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo — paste a transaction, get a fraud probability + verdict + a SHAP explanation of the top contributing features.
 
-<!-- TODO(Phase 1): demo GIF here — paste a transaction → probability + SHAP explanation. -->
+<a href="https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo">
+  <img src="docs/demo.gif" width="520" alt="Explainable fraud detection — paste a transaction, get a probability, verdict, and SHAP explanation">
+</a>
 
 
 **The argument (two sentences).** A *decision-level* fusion of LightGBM and LSTM — keeping the
