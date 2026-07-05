@@ -9,6 +9,7 @@
 > behind its architecture. Not "deploy my model" — an argument, with a deployed system as the proof.
 
 **▶ Live demo:** https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo — paste a transaction, get a fraud probability + verdict + a SHAP explanation of the top contributing features.
+**📄 Write-up:** [docs/WRITEUP.md](docs/WRITEUP.md) — the full story: reproduction, the fusion study, shipping it, and the MLOps loop.
 
 <a href="https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo">
   <img src="docs/demo.gif" width="520" alt="Explainable fraud detection — paste a transaction, get a probability, verdict, and SHAP explanation">
@@ -42,7 +43,7 @@ This project ships in public phases. Current state:
 | 1 | Real-time explainable FastAPI service + SHAP explanation + demo UI, Dockerised | 🟢 **live on Hugging Face Spaces** |
 | 2 | Fusion comparison + cost/threshold analysis + PaySim generalization, tracked in MLflow | 🟢 done — 3 MLflow experiments ([experiments/](experiments/)) |
 | 3 | Drift monitoring (Evidently, *simulated*), Airflow retraining DAG (docker-compose), CI | 🟢 done — [monitoring/](monitoring/) + [airflow/](airflow/), CI green |
-| 4 | Technical write-up linking the live demo and code | ⬜ not started |
+| 4 | Technical write-up linking the live demo and code | 🟢 done — [docs/WRITEUP.md](docs/WRITEUP.md) |
 
 `serving/`, `experiments/`, `monitoring/`, and `airflow/` are built out (each with its own README).
 Only the Phase 4 write-up remains.
