@@ -7,7 +7,7 @@ sdk: docker
 app_port: 7860
 pinned: false
 license: mit
-short_description: Real-time fraud scoring — LightGBM + LSTM fusion, SHAP + LIME
+short_description: Real-time fraud scoring: LightGBM+LSTM fusion, SHAP+LIME
 ---
 
 # Explainable Fraud Detection — live demo
