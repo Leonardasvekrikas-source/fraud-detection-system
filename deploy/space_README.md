@@ -7,24 +7,25 @@ sdk: docker
 app_port: 7860
 pinned: false
 license: mit
-short_description: Real-time credit-card fraud scoring with SHAP explanations
+short_description: Real-time fraud scoring — LightGBM + LSTM fusion, SHAP + LIME
 ---
 
 # Explainable Fraud Detection — live demo
 
-Score a credit-card transaction in real time and see **why**. This FastAPI service returns a
-fraud probability, a verdict (Normal / Fraud / **Expert-Checking**), and a **SHAP** breakdown of
-the features driving the decision — so the score is never a black box.
+Score a credit-card transaction in real time and see **why**. This FastAPI service runs the
+full two-model system and returns a fraud probability from **each** subsystem, the fused verdict
+(Normal / Fraud / **Expert-Checking**), and **two** explanations side by side — so the score is
+never a black box.
 
-**Try it:** paste a transaction (or click *Load example*) → probability + verdict + the top
-contributing features.
+**Try it:** paste a transaction (or click *Load example*) → per-model probabilities + verdict +
+the features driving each model.
 
-## Under the hood
-- **LightGBM** gradient-boosting on tabular transaction features, with an exact, fast **SHAP
-  TreeExplainer** for per-request explanations.
-- Part of a larger engineering study arguing that **decision-level fusion** (keeping LightGBM
-  and an LSTM separable) is the better production choice than feature-level fusion — because it
-  stays simpler, lower-latency, and explainable. This demo runs the lean LightGBM + SHAP path.
+## Under the hood — decision-level fusion + dual XAI
+- **LightGBM** (Subsystem 1) → P1, explained by an exact, fast **SHAP TreeExplainer**.
+- **LSTM** (Subsystem 2) → P2 over a sliding window, explained by model-agnostic **LIME**
+  (a local surrogate — weights are directional drivers, not exact attributions).
+- **Algorithm-1 fusion:** `P_sum = P1 + P2` at threshold θ=0.5 gives a three-way verdict, with an
+  **Expert-Checking** tier when the two models disagree — a built-in human-in-the-loop.
 - Trained on the public [European Credit Card Fraud dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud);
   reproduces the source method (Yousefimehr & Ghatee, 2025).
 
@@ -32,4 +33,4 @@ contributing features.
 👉 **https://github.com/Leonardasvekrikas-source/fraud-detection-system**
 
 Reproducible training/eval, an MLflow-tracked fusion vs. cost-vs-threshold vs. generalization
-study, tests, and CI.
+study, probability calibration, latency profiling, a drift-monitored retraining loop, tests, and CI.

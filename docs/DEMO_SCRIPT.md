@@ -12,25 +12,31 @@ fraud transaction from `docs/sample_transactions.json` copied to your clipboard.
 ---
 
 ### 0:00–0:15 — Hook (demo tab)
-> "This is a real-time, explainable credit-card fraud detector — deployed and live. Let me show
-> you what it does, then how it's built."
+> "This is a real-time, explainable credit-card fraud detector — deployed and live. It runs **two
+> models** and explains **both**. Let me show you what it does, then how it's built."
 
 Have the demo page already loaded.
 
-### 0:15–0:50 — Score a fraud (the money shot)
+### 0:15–0:55 — Score a fraud (the money shot)
 Paste the fraud transaction → click **Score transaction**.
-> "I paste a transaction, and it returns a fraud probability, a verdict — **Fraud** — and, crucially,
-> **why**: a SHAP explanation showing V14, V12, V10 drove the decision. It's not a black box. In
-> fraud, that explanation is what an analyst — and a regulator — needs."
+> "I paste a transaction. Two models score it: a **LightGBM** gives P1, an **LSTM** gives P2. They
+> fuse into a single verdict — **Fraud** — and, crucially, each model explains itself. On the left,
+> **SHAP** shows V14, V12, V10 drove the tree. On the right, **LIME** explains the black-box LSTM —
+> and it independently lands on the same drivers. Two methods, one story. It's not a black box."
 
-Point at the SHAP bars as you say the feature names.
+Point at the SHAP bars, then the LIME bars, as you say the feature names.
 
-### 0:50–1:10 — Contrast with a normal transaction
-Click **Load example** (all-zeros) or paste the normal example → Score.
-> "A normal transaction comes back **Normal**, low probability, different drivers. The model
-> discriminates, and it explains itself either way."
+### 0:55–1:15 — The clever bit: Expert-Checking (the disagreement case)
+Paste the *borderline* fraud from `docs/sample_transactions.json` (LightGBM sure, LSTM unsure) → Score.
+> "Here's what I like most. When the two models **disagree** — LightGBM says fraud, the LSTM isn't
+> sure — the system doesn't force a call. It returns **Expert-Checking**: route it to a human. That
+> human-in-the-loop tier is built into the fusion rule, not bolted on."
 
-### 1:10–1:40 — The engineering (repo tab)
+Then click **Load example** (all-zeros) or paste the normal example → Score.
+> "A normal transaction comes back **Normal**, both models low. It discriminates — and explains
+> itself — either way."
+
+### 1:15–1:40 — The engineering (repo tab)
 Scroll the README: the architecture diagram, the results table, the green CI badge.
 > "Behind it: an independent reproduction of a 2025 research paper — reproduced bit-for-bit — turned
 > into a tested, CI-checked package. The architecture is a decision-level fusion of LightGBM and an

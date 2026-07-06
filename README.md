@@ -152,7 +152,7 @@ flowchart TD
 | Build | Image | Runs | Explains | Dockerfile |
 |-------|------:|------|----------|------------|
 | **Lean** | ~400 MB | LightGBM (P1) | SHAP | `Dockerfile` |
-| **Full fusion** | ~2–3 GB | LightGBM + LSTM (P1 + P2) → 3-way verdict | SHAP **and** LIME | `Dockerfile.fusion` |
+| **Full fusion** | ~4 GB | LightGBM + LSTM (P1 + P2) → 3-way verdict | SHAP **and** LIME | `Dockerfile.fusion` |
 
 ```bash
 # full dual-XAI fusion demo (LightGBM + LSTM, SHAP + LIME) on http://localhost:7860
