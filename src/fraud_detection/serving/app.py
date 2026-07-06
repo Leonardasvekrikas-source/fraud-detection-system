@@ -15,7 +15,9 @@
 
 from __future__ import annotations
 
+import json
 import os
+from pathlib import Path
 
 import numpy as np
 from fastapi import FastAPI, HTTPException
@@ -29,6 +31,17 @@ from fraud_detection.serving.explain import LightGBMExplainer
 from fraud_detection.serving.ui import DEMO_HTML
 
 DEFAULT_MODEL_DIR = "artifacts/model"
+_ASSET_DIR = Path(__file__).parent
+
+
+def _load_asset(name: str) -> dict:
+    """Load a static demo asset (curated examples / feature metadata) shipped in
+    the serving package. Missing or unreadable -> empty (the UI degrades)."""
+    p = _ASSET_DIR / name
+    try:
+        return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {}
+    except Exception:  # noqa: BLE001 - a bad asset must never break serving
+        return {}
 
 
 class ScoreRequest(BaseModel):
@@ -92,6 +105,8 @@ def create_app(bundle: ModelBundle | None = None, model_dir: str | None = None) 
     app.state.bundle = bundle
     app.state.explainer = explainer
     app.state.lstm_explainer = lstm_explainer
+    app.state.feature_meta = _load_asset("feature_meta.json")
+    app.state.demo_examples = _load_asset("demo_examples.json")
     app.state.load_error = load_error
     app.state.theta = (
         float(bundle.metadata.get("theta", config.INFERENCE_THETA))
@@ -130,7 +145,14 @@ def create_app(bundle: ModelBundle | None = None, model_dir: str | None = None) 
             "selected_features": b.metadata.get("selected_features", []),
             "theta": app.state.theta,
             "window_size": b.metadata.get("window_size", config.WINDOW_SIZE),
+            "feature_meta": app.state.feature_meta,
         }
+
+    @app.get("/examples")
+    def examples() -> dict:
+        """Curated real transactions (10 each Normal / Fraud / Expert-Checking),
+        each verified to produce that verdict, for the demo's quick-try buttons."""
+        return app.state.demo_examples
 
     @app.post("/score")
     def score(req: ScoreRequest) -> dict:

@@ -50,6 +50,11 @@ def test_health_schema_and_score():
 
     schema = client.get("/schema").json()
     assert schema["raw_feature_columns"] == RAW_COLS
+    assert "feature_meta" in schema  # present (may be the deployed model's, or {})
+
+    # curated demo examples endpoint returns the three verdict buckets
+    examples = client.get("/examples").json()
+    assert isinstance(examples, dict)
 
     # dict payload
     resp = client.post("/score", json={"features": {c: 0.0 for c in RAW_COLS}, "top_k": 5})

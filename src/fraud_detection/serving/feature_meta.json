@@ -1,0 +1,276 @@
+{
+  "Time": {
+    "selected": true,
+    "name": "Time",
+    "unit": "seconds since first transaction",
+    "kind": "raw",
+    "direction": "lower \u2192 fraud",
+    "tier": "minor driver",
+    "corr": -0.012,
+    "rank": 11
+  },
+  "V1": {
+    "selected": true,
+    "name": "V1",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "secondary driver",
+    "corr": -0.101,
+    "rank": 7
+  },
+  "V2": {
+    "selected": true,
+    "name": "V2",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "higher \u2192 fraud",
+    "tier": "minor driver",
+    "corr": 0.091,
+    "rank": 15
+  },
+  "V3": {
+    "selected": true,
+    "name": "V3",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "secondary driver",
+    "corr": -0.193,
+    "rank": 5,
+    "alias": "amount-pattern signal"
+  },
+  "V4": {
+    "selected": true,
+    "name": "V4",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "higher \u2192 fraud",
+    "tier": "primary fraud driver",
+    "corr": 0.133,
+    "rank": 2,
+    "alias": "purchase-velocity signal"
+  },
+  "V5": {
+    "selected": true,
+    "name": "V5",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "minor driver",
+    "corr": -0.095,
+    "rank": 12
+  },
+  "V6": {
+    "selected": false,
+    "name": "V6",
+    "unit": "anonymized PCA component",
+    "kind": "pca"
+  },
+  "V7": {
+    "selected": true,
+    "name": "V7",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "minor driver",
+    "corr": -0.187,
+    "rank": 17
+  },
+  "V8": {
+    "selected": true,
+    "name": "V8",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "higher \u2192 fraud",
+    "tier": "secondary driver",
+    "corr": 0.02,
+    "rank": 8
+  },
+  "V9": {
+    "selected": true,
+    "name": "V9",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "minor driver",
+    "corr": -0.098,
+    "rank": 20
+  },
+  "V10": {
+    "selected": true,
+    "name": "V10",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "primary fraud driver",
+    "corr": -0.217,
+    "rank": 4,
+    "alias": "merchant-risk signal"
+  },
+  "V11": {
+    "selected": true,
+    "name": "V11",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "higher \u2192 fraud",
+    "tier": "secondary driver",
+    "corr": 0.155,
+    "rank": 6,
+    "alias": "location / context signal"
+  },
+  "V12": {
+    "selected": true,
+    "name": "V12",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "primary fraud driver",
+    "corr": -0.261,
+    "rank": 3,
+    "alias": "transaction-pattern deviation"
+  },
+  "V13": {
+    "selected": true,
+    "name": "V13",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "minor driver",
+    "corr": -0.005,
+    "rank": 19
+  },
+  "V14": {
+    "selected": true,
+    "name": "V14",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "primary fraud driver",
+    "corr": -0.303,
+    "rank": 1,
+    "alias": "account-behavior anomaly"
+  },
+  "V15": {
+    "selected": false,
+    "name": "V15",
+    "unit": "anonymized PCA component",
+    "kind": "pca"
+  },
+  "V16": {
+    "selected": true,
+    "name": "V16",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "minor driver",
+    "corr": -0.197,
+    "rank": 16
+  },
+  "V17": {
+    "selected": true,
+    "name": "V17",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "minor driver",
+    "corr": -0.326,
+    "rank": 13
+  },
+  "V18": {
+    "selected": true,
+    "name": "V18",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "lower \u2192 fraud",
+    "tier": "secondary driver",
+    "corr": -0.111,
+    "rank": 9
+  },
+  "V19": {
+    "selected": true,
+    "name": "V19",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "higher \u2192 fraud",
+    "tier": "minor driver",
+    "corr": 0.035,
+    "rank": 21
+  },
+  "V20": {
+    "selected": true,
+    "name": "V20",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "higher \u2192 fraud",
+    "tier": "minor driver",
+    "corr": 0.02,
+    "rank": 18
+  },
+  "V21": {
+    "selected": true,
+    "name": "V21",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "higher \u2192 fraud",
+    "tier": "minor driver",
+    "corr": 0.04,
+    "rank": 22
+  },
+  "V22": {
+    "selected": true,
+    "name": "V22",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "higher \u2192 fraud",
+    "tier": "secondary driver",
+    "corr": 0.001,
+    "rank": 10
+  },
+  "V23": {
+    "selected": false,
+    "name": "V23",
+    "unit": "anonymized PCA component",
+    "kind": "pca"
+  },
+  "V24": {
+    "selected": false,
+    "name": "V24",
+    "unit": "anonymized PCA component",
+    "kind": "pca"
+  },
+  "V25": {
+    "selected": false,
+    "name": "V25",
+    "unit": "anonymized PCA component",
+    "kind": "pca"
+  },
+  "V26": {
+    "selected": false,
+    "name": "V26",
+    "unit": "anonymized PCA component",
+    "kind": "pca"
+  },
+  "V27": {
+    "selected": true,
+    "name": "V27",
+    "unit": "anonymized PCA component",
+    "kind": "pca",
+    "direction": "higher \u2192 fraud",
+    "tier": "minor driver",
+    "corr": 0.018,
+    "rank": 14
+  },
+  "V28": {
+    "selected": false,
+    "name": "V28",
+    "unit": "anonymized PCA component",
+    "kind": "pca"
+  },
+  "Amount": {
+    "selected": false,
+    "name": "Amount",
+    "unit": "transaction value",
+    "kind": "raw"
+  }
+}

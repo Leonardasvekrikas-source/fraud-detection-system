@@ -67,6 +67,9 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 fraud_detection = ["py.typed"]
+# Ship the demo assets (curated examples + feature metadata) inside the wheel so
+# they're present when the package is pip-installed into the Docker image.
+"fraud_detection.serving" = ["*.json"]
 
 # ---------------------------------------------------------------------------
 # Tooling
