@@ -84,6 +84,36 @@ git commit -m "Deploy full dual-XAI fusion demo (LightGBM + LSTM, SHAP + LIME)"
 git push
 ```
 
+**On Windows PowerShell** (no `$VAR=...`, no `&&`, no `/c/` paths — this is the same steps translated):
+
+```powershell
+git clone https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo
+cd fraud-detection-demo
+$SRC = "C:\Users\strei\Documents\!Random_projects\!GitPortfolio\Fraud detection system"
+Remove-Item -Recurse -Force src, config, artifacts -ErrorAction SilentlyContinue
+Copy-Item -Recurse "$SRC\src" .
+Copy-Item -Recurse "$SRC\config" .
+Copy-Item "$SRC\pyproject.toml" .
+Copy-Item "$SRC\Dockerfile.fusion" Dockerfile
+New-Item -ItemType Directory -Force artifacts | Out-Null
+Copy-Item -Recurse "$SRC\artifacts\model-fusion" artifacts\model-fusion
+Copy-Item "$SRC\deploy\space_README.md" README.md
+git lfs install
+git lfs track "*.joblib" "*.keras" "*.npy"
+git add .gitattributes .
+git commit -m "Deploy full dual-XAI fusion demo (LightGBM + LSTM, SHAP + LIME)"
+# HF requires a WRITE token (not a password). Simplest: put it in the push URL, then scrub it out.
+$T = "hf_xxxxxxxxxxxxxxxxxxxxxxxx"   # from https://huggingface.co/settings/tokens (type: Write)
+git remote set-url origin "https://Leonardasvekrikas-source:$T@huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo"
+git push
+git remote set-url origin "https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo"  # remove token from .git/config
+```
+
+> Gotchas seen in practice: (1) the Space `README.md` front-matter caps `short_description` at 60
+> chars **and** must be valid YAML — quote it and avoid a bare `: ` inside the value. (2) `Copy-Item
+> -Recurse src` can drag in a `src/*.egg-info/` build artifact; harmless, but `Remove-Item -Recurse
+> -Force src\*.egg-info` keeps it clean.
+
 The Space rebuilds the Dockerfile (now with TensorFlow) and goes live at
 `https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo`.
 

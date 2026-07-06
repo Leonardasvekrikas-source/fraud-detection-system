@@ -122,14 +122,19 @@ and fixing that — rather than shipping a misleading number — is the point.
 ## 3. Ship it (real-time, explainable)
 
 A FastAPI service ([live](https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo))
-scores a transaction and returns a fraud probability, a verdict (Normal / Fraud / Expert-Checking),
-and a **SHAP explanation** of the top contributing features. Because the models stay separable, the
-LightGBM component gets an **exact, fast `TreeExplainer`** — the explainability payoff of the
-decision-level design.
+runs **both** subsystems on a transaction and returns each model's fraud probability (P1, P2), the
+fused verdict (Normal / Fraud / Expert-Checking), and **two** explanations — one per model. Because
+the models stay separable, each gets the *right* explainer: an **exact, fast SHAP `TreeExplainer`**
+for the LightGBM component, and **model-agnostic LIME** for the black-box LSTM (its local surrogate
+reaches R² ≈ 0.4, so those weights read as directional drivers, not exact attributions). That
+per-model attributability is the explainability payoff of the decision-level design.
 
 The explanations are faithful to the research: on a real fraud transaction, the live endpoint
-returns `V14, V12, V10, V4` as the top drivers — exactly the features the thesis's SHAP analysis
-identified. It's Dockerized (a lean ~1.5 GB image) and deployed to Hugging Face Spaces.
+returns `V14, V12, V10, V4` as SHAP's top drivers — exactly the features the thesis identified — and
+LIME independently surfaces the same ones for the LSTM. The three-way verdict earns its keep too:
+when the two models disagree (LightGBM sure, LSTM unsure), the transaction routes to
+**Expert-Checking** rather than being forced. It's Dockerized (`Dockerfile.fusion`, a ~4 GB image
+with TensorFlow) and deployed to Hugging Face Spaces; a lean LightGBM-only image is also provided.
 
 Building this surfaced the kind of bug that only shows on a clean environment: a `.gitignore` rule
 meant for the trained-model *output* directory (`artifacts/`) was **silently swallowing a source
