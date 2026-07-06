@@ -66,7 +66,11 @@ it to ~75 seconds is noted at the end.
 > approach actually did worse."
 
 ### 1:50–2:00 · Close
-**▶ DO:** Scroll to the monitoring / Airflow section, then stop.
+**▶ DO:** In the README's **Architecture** section, scroll to the **second diagram** — the
+"Production loop (Phase 3): retrain only when a challenger beats the live champion" flowchart
+(`ingest → train → evaluate → promote-if-it-beats-champion`, with the Evidently drift monitor feeding
+back in). Point at it, then stop. *(Backup spots: the "🔁 Production loop" Highlights bullet, or the
+Phase 3 row of the Status table.)*
 
 > "And it doesn't stop at deployment — there's drift monitoring and an automated retraining pipeline
 > that only promotes a new model if it beats the live one. It's all reproducible, and the code and
