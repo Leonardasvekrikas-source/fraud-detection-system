@@ -1,0 +1,40 @@
+# Explainable fraud detection API — FULL FUSION image (LightGBM + LSTM).
+#
+# This variant installs TensorFlow (via the `lstm` extra) so the container runs
+# BOTH subsystems: LightGBM -> P1 (SHAP) and LSTM -> P2 (LIME), fused into the
+# three-way Normal / Fraud / Expert-Checking verdict. It is much larger than the
+# lean Dockerfile (~2-3 GB vs ~400 MB) because of TensorFlow — use the lean image
+# when you only need the LightGBM subsystem.
+#
+# Build from the repo root (a fusion bundle WITH an LSTM must exist first):
+#   fraud-detect train --save artifacts/model-fusion
+#   docker build -f Dockerfile.fusion -t fraud-demo-fusion .
+#   docker run -p 7860:7860 fraud-demo-fusion   # -> http://localhost:7860
+#
+# HF Docker Spaces serve on port 7860; this Dockerfile is self-contained.
+
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    MODEL_DIR=/app/artifacts/model-fusion \
+    TF_CPP_MIN_LOG_LEVEL=3 \
+    PORT=7860
+
+# libgomp1: OpenMP runtime required by LightGBM (missing from python:3.12-slim).
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY pyproject.toml README.md ./
+COPY src ./src
+COPY config ./config
+RUN pip install --upgrade pip && pip install ".[serve,lstm]"
+
+# Trained fusion bundle (scaler + F2Vote + LightGBM + LSTM + LIME background).
+COPY artifacts/model-fusion ./artifacts/model-fusion
+
+EXPOSE 7860
+CMD ["sh", "-c", "uvicorn fraud_detection.serving.app:app --host 0.0.0.0 --port ${PORT}"]

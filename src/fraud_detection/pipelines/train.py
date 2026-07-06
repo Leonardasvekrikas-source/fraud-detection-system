@@ -31,6 +31,10 @@ from fraud_detection.preprocessing.hybrid_os import HybridOS
 from fraud_detection.preprocessing.hybrid_us import HybridUS
 from fraud_detection.preprocessing.windowing import create_windows
 
+# Contiguous tail used to train the LSTM subsystem (see note in train_bundle).
+# Keeps HybridUS's OneClassSVM tractable while preserving transaction sequences.
+LSTM_TRAIN_TAIL = 120_000
+
 
 def train_bundle(df: pd.DataFrame, include_lstm: bool = True) -> ModelBundle:
     """Train both subsystems on the full dataset and return a ModelBundle."""
@@ -55,16 +59,38 @@ def train_bundle(df: pd.DataFrame, include_lstm: bool = True) -> ModelBundle:
 
     selected_features = [feature_cols[i] for i in f2vote.selected_indices_]
 
+    # Background sample of scaled + F2Vote-selected features, for LIME's
+    # perturbation statistics when explaining the LSTM (only used with an LSTM).
+    background = None
+    if include_lstm:
+        import numpy as np
+
+        rng = np.random.default_rng(config.RANDOM_STATE)
+        idx = rng.choice(len(X_f2), size=min(2000, len(X_f2)), replace=False)
+        background = X_f2[idx].astype("float32")
+
     # -- Subsystem 1: HybridOS -> LightGBM ------------------------------------
     print("\n[train] Subsystem 1: HybridOS + LightGBM ...")
     X_os, y_os = HybridOS().fit_resample(X_f2, y_all)
     lgbm = LightGBMModel().fit(X_os, y_os)
 
     # -- Subsystem 2: HybridUS -> windows -> LSTM -----------------------------
+    # HybridUS fits a OneClassSVM on the normal class, which is ~O(n^2): on the
+    # full dataset that call is intractable. We train the LSTM on a CONTIGUOUS
+    # recent tail instead - a random subsample would shred the transaction
+    # sequences the LSTM depends on, but the tail keeps them intact. Same
+    # precedent as experiments/paysim_generalization.py. LightGBM (Subsystem 1)
+    # above still trains on the FULL dataset.
     lstm_keras = None
     if include_lstm:
         print("\n[train] Subsystem 2: HybridUS + windows + LSTM ...")
-        X_us, y_us = HybridUS().fit_resample(X_f2, y_all)
+        tail = min(LSTM_TRAIN_TAIL, len(X_f2))
+        X_tail, y_tail = X_f2[-tail:], y_all[-tail:]
+        print(
+            f"[train] LSTM on contiguous tail: {tail} rows "
+            f"({int((y_tail == config.FRAUD_LABEL).sum())} fraud) of {len(X_f2)} total"
+        )
+        X_us, y_us = HybridUS().fit_resample(X_tail, y_tail)
         X_win, y_win = create_windows(X_us, y_us, config.WINDOW_SIZE)
         lstm = LSTMModel()
         lstm.build(input_shape=(config.WINDOW_SIZE, X_win.shape[2]))
@@ -91,6 +117,7 @@ def train_bundle(df: pd.DataFrame, include_lstm: bool = True) -> ModelBundle:
         f2vote=f2vote,
         lightgbm=lgbm.booster,
         lstm=lstm_keras,
+        background=background,
         metadata=metadata,
     )
 

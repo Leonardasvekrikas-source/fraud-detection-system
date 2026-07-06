@@ -77,14 +77,21 @@ def create_app(bundle: ModelBundle | None = None, model_dir: str | None = None) 
             print(f"[serving] no model loaded ({load_error}); /score will return 503.")
 
     explainer = None
+    lstm_explainer = None
     if bundle is not None:
         feature_names = bundle.metadata.get("selected_features") or [
             f"f{i}" for i in range(bundle.lightgbm.n_features_in_)
         ]
         explainer = LightGBMExplainer(bundle.lightgbm, feature_names)
+        if bundle.lstm is not None and bundle.background is not None:
+            from fraud_detection.serving.explain_lstm import LSTMLimeExplainer
+
+            w = int(bundle.metadata.get("window_size", config.WINDOW_SIZE))
+            lstm_explainer = LSTMLimeExplainer(bundle.lstm, bundle.background, feature_names, w)
 
     app.state.bundle = bundle
     app.state.explainer = explainer
+    app.state.lstm_explainer = lstm_explainer
     app.state.load_error = load_error
     app.state.theta = (
         float(bundle.metadata.get("theta", config.INFERENCE_THETA))
@@ -136,14 +143,17 @@ def create_app(bundle: ModelBundle | None = None, model_dir: str | None = None) 
 
         p1 = float(b.predict_p1(X_raw)[0])
         x_selected = b.transform_features(X_raw)[0]
-        explanation = app.state.explainer.explain_row(x_selected, top_k=req.top_k)
+        explanation_lightgbm = app.state.explainer.explain_row(x_selected, top_k=req.top_k)
 
         theta = app.state.theta
+        explanation_lstm = None
         if b.lstm is not None:
             p2 = float(b.predict_p2(X_raw)[0])
             decision = engine.classify_single(p1, p2, theta=theta)
             p_sum = p1 + p2
             mode = "fusion"
+            if app.state.lstm_explainer is not None:
+                explanation_lstm = app.state.lstm_explainer.explain_row(x_selected, top_k=req.top_k)
         else:
             # LightGBM-only build: full Algorithm 1 needs P2. Report a single-model
             # verdict at the standard 0.5 threshold and label the mode honestly.
@@ -159,7 +169,8 @@ def create_app(bundle: ModelBundle | None = None, model_dir: str | None = None) 
             "p2": (round(p2, 6) if p2 is not None else None),
             "p_sum": round(p_sum, 6),
             "theta": theta,
-            "explanation": explanation,
+            "explanation_lightgbm": explanation_lightgbm,  # SHAP (P1)
+            "explanation_lstm": explanation_lstm,  # LIME (P2), when fusion
         }
 
     @app.get("/", response_class=HTMLResponse)

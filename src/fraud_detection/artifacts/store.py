@@ -36,13 +36,20 @@ class ModelBundle:
     F2VOTE_FILE = "f2vote.joblib"
     LGBM_FILE = "lightgbm.joblib"
     LSTM_FILE = "lstm.keras"
+    BACKGROUND_FILE = "background.npy"
     META_FILE = "metadata.json"
 
-    def __init__(self, scaler, f2vote, lightgbm, lstm=None, metadata: dict[str, Any] | None = None):
+    def __init__(
+        self, scaler, f2vote, lightgbm, lstm=None, background=None,
+        metadata: dict[str, Any] | None = None,
+    ):
         self.scaler = scaler
         self.f2vote = f2vote
         self.lightgbm = lightgbm  # a fitted LGBMClassifier
         self.lstm = lstm  # a fitted Keras model, or None
+        # a sample of scaled + F2Vote-selected training features, for LIME's
+        # perturbation statistics (only needed for the LSTM/LIME path)
+        self.background = background
         self.metadata = metadata or {}
 
     # -- persistence ----------------------------------------------------------
@@ -57,6 +64,8 @@ class ModelBundle:
         joblib.dump(self.lightgbm, d / self.LGBM_FILE)
         if self.lstm is not None:
             self.lstm.save(d / self.LSTM_FILE)
+        if self.background is not None:
+            np.save(d / self.BACKGROUND_FILE, np.asarray(self.background, dtype=np.float32))
 
         meta = {**self.metadata, "has_lstm": self.lstm is not None}
         (d / self.META_FILE).write_text(json.dumps(meta, indent=2), encoding="utf-8")
@@ -77,6 +86,9 @@ class ModelBundle:
         if meta_path.is_file():
             metadata = json.loads(meta_path.read_text(encoding="utf-8"))
 
+        bg_path = d / cls.BACKGROUND_FILE
+        background = np.load(bg_path) if bg_path.is_file() else None
+
         lstm = None
         lstm_path = d / cls.LSTM_FILE
         if with_lstm and lstm_path.exists() and metadata.get("has_lstm", True):
@@ -92,7 +104,7 @@ class ModelBundle:
                     "(P2 / full fusion disabled)."
                 )
 
-        return cls(scaler, f2vote, lightgbm, lstm=lstm, metadata=metadata)
+        return cls(scaler, f2vote, lightgbm, lstm=lstm, background=background, metadata=metadata)
 
     # -- inference ------------------------------------------------------------
 

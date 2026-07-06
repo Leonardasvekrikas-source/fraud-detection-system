@@ -59,7 +59,8 @@ def test_health_schema_and_score():
     assert body["mode"] == "lightgbm_only"
     assert body["p2"] is None
     assert 0.0 <= body["p1"] <= 1.0
-    assert 1 <= len(body["explanation"]["top_features"]) <= 5
+    assert 1 <= len(body["explanation_lightgbm"]["top_features"]) <= 5
+    assert body["explanation_lstm"] is None  # lightgbm-only build has no LIME
 
     # ordered-list payload
     resp2 = client.post("/score", json={"features": [0.0] * len(RAW_COLS)})
