@@ -94,7 +94,7 @@ DEMO_HTML = """<!doctype html>
       fields (merchant, location, …) for privacy, so their true meaning is unknown even to us. Each
       label instead shows the feature's <i>measured</i> role: how much this <b>model</b> relies on it
       (primary / secondary / minor driver, by SHAP importance) and which direction pushes toward fraud.
-      Names in <span class="alias">"quotes"</span> are <b>illustrative</b> mnemonics for the top drivers
+      Names in <span class="alias">"quotes"</span> are <b>illustrative</b> mnemonics for each component
       — readable stand-ins, <i>not</i> the real (unknown) fields.
     </div>
   </div>

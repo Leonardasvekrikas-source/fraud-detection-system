@@ -37,24 +37,40 @@ DATA = "data/creditcard.csv"
 OUT_DIR = Path("src/fraud_detection/serving")
 RNG = np.random.default_rng(42)
 
-# Illustrative, human-friendly stand-ins for the top fraud-driving components.
+# Illustrative, human-friendly stand-ins for EVERY anonymized PCA component.
 # These are NOT the real (anonymized) field meanings - they are mnemonics to make
-# the demo readable, and the UI labels them as such. Attached only to top drivers.
+# the demo readable, and the UI + legend label them as illustrative. Every V1-V28
+# gets one so no feature ever renders blank (Time/Amount already have real names).
 ALIAS_POOL = {
-    "V14": "account-behavior anomaly",
-    "V17": "spending-profile shift",
-    "V12": "transaction-pattern deviation",
-    "V10": "merchant-risk signal",
-    "V16": "historical-consistency score",
-    "V11": "location / context signal",
-    "V4": "purchase-velocity signal",
-    "V3": "amount-pattern signal",
-    "V7": "recipient-risk signal",
-    "V18": "session-behavior signal",
-    "V9": "device / channel signal",
+    "V1": "account-age signal",
     "V2": "counterparty signal",
+    "V3": "amount-pattern signal",
+    "V4": "purchase-velocity signal",
+    "V5": "balance-trend signal",
+    "V6": "transaction-frequency signal",
+    "V7": "recipient-risk signal",
+    "V8": "channel-mismatch signal",
+    "V9": "device / channel signal",
+    "V10": "merchant-risk signal",
+    "V11": "location / context signal",
+    "V12": "transaction-pattern deviation",
+    "V13": "time-of-day signal",
+    "V14": "account-behavior anomaly",
+    "V15": "session-consistency signal",
+    "V16": "historical-consistency score",
+    "V17": "spending-profile shift",
+    "V18": "geographic-dispersion signal",
+    "V19": "cross-border signal",
+    "V20": "high-value-flag signal",
+    "V21": "card-usage-pattern signal",
+    "V22": "billing-mismatch signal",
+    "V23": "authorization-history signal",
+    "V24": "merchant-category signal",
+    "V25": "refund / chargeback signal",
+    "V26": "peer-comparison signal",
+    "V27": "long-tail-behavior signal",
+    "V28": "residual-risk signal",
 }
-N_ALIASES = 8  # attach aliases to the top-N most model-important features
 
 
 def tier_for(rank: int, n_selected: int) -> str:
@@ -90,7 +106,6 @@ def main() -> None:
     imp_by_feat = dict(zip(selected, imp, strict=False))
     # rank selected features by importance (1 = most important)
     rank = {f: i + 1 for i, (f, _) in enumerate(sorted(imp_by_feat.items(), key=lambda kv: -kv[1]))}
-    top_feats = [f for f, _ in sorted(imp_by_feat.items(), key=lambda kv: -kv[1])[:N_ALIASES]]
 
     # -- per-feature metadata --------------------------------------------------
     meta = {}
@@ -108,8 +123,10 @@ def main() -> None:
             entry["tier"] = tier_for(rank[c], len(selected))
             entry["corr"] = round(corr, 3)
             entry["rank"] = rank[c]
-            if c in top_feats and c in ALIAS_POOL:
-                entry["alias"] = ALIAS_POOL[c]
+        # every anonymized PCA component gets an illustrative alias (never blank);
+        # Time/Amount keep their real names, so they're deliberately not in the pool.
+        if c in ALIAS_POOL:
+            entry["alias"] = ALIAS_POOL[c]
         meta[c] = entry
 
     (OUT_DIR / "feature_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")

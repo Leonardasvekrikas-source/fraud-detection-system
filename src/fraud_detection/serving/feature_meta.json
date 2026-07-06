@@ -17,7 +17,8 @@
     "direction": "lower \u2192 fraud",
     "tier": "secondary driver",
     "corr": -0.101,
-    "rank": 7
+    "rank": 7,
+    "alias": "account-age signal"
   },
   "V2": {
     "selected": true,
@@ -27,7 +28,8 @@
     "direction": "higher \u2192 fraud",
     "tier": "minor driver",
     "corr": 0.091,
-    "rank": 15
+    "rank": 15,
+    "alias": "counterparty signal"
   },
   "V3": {
     "selected": true,
@@ -59,13 +61,15 @@
     "direction": "lower \u2192 fraud",
     "tier": "minor driver",
     "corr": -0.095,
-    "rank": 12
+    "rank": 12,
+    "alias": "balance-trend signal"
   },
   "V6": {
     "selected": false,
     "name": "V6",
     "unit": "anonymized PCA component",
-    "kind": "pca"
+    "kind": "pca",
+    "alias": "transaction-frequency signal"
   },
   "V7": {
     "selected": true,
@@ -75,7 +79,8 @@
     "direction": "lower \u2192 fraud",
     "tier": "minor driver",
     "corr": -0.187,
-    "rank": 17
+    "rank": 17,
+    "alias": "recipient-risk signal"
   },
   "V8": {
     "selected": true,
@@ -85,7 +90,8 @@
     "direction": "higher \u2192 fraud",
     "tier": "secondary driver",
     "corr": 0.02,
-    "rank": 8
+    "rank": 8,
+    "alias": "channel-mismatch signal"
   },
   "V9": {
     "selected": true,
@@ -95,7 +101,8 @@
     "direction": "lower \u2192 fraud",
     "tier": "minor driver",
     "corr": -0.098,
-    "rank": 20
+    "rank": 20,
+    "alias": "device / channel signal"
   },
   "V10": {
     "selected": true,
@@ -138,7 +145,8 @@
     "direction": "lower \u2192 fraud",
     "tier": "minor driver",
     "corr": -0.005,
-    "rank": 19
+    "rank": 19,
+    "alias": "time-of-day signal"
   },
   "V14": {
     "selected": true,
@@ -155,7 +163,8 @@
     "selected": false,
     "name": "V15",
     "unit": "anonymized PCA component",
-    "kind": "pca"
+    "kind": "pca",
+    "alias": "session-consistency signal"
   },
   "V16": {
     "selected": true,
@@ -165,7 +174,8 @@
     "direction": "lower \u2192 fraud",
     "tier": "minor driver",
     "corr": -0.197,
-    "rank": 16
+    "rank": 16,
+    "alias": "historical-consistency score"
   },
   "V17": {
     "selected": true,
@@ -175,7 +185,8 @@
     "direction": "lower \u2192 fraud",
     "tier": "minor driver",
     "corr": -0.326,
-    "rank": 13
+    "rank": 13,
+    "alias": "spending-profile shift"
   },
   "V18": {
     "selected": true,
@@ -185,7 +196,8 @@
     "direction": "lower \u2192 fraud",
     "tier": "secondary driver",
     "corr": -0.111,
-    "rank": 9
+    "rank": 9,
+    "alias": "geographic-dispersion signal"
   },
   "V19": {
     "selected": true,
@@ -195,7 +207,8 @@
     "direction": "higher \u2192 fraud",
     "tier": "minor driver",
     "corr": 0.035,
-    "rank": 21
+    "rank": 21,
+    "alias": "cross-border signal"
   },
   "V20": {
     "selected": true,
@@ -205,7 +218,8 @@
     "direction": "higher \u2192 fraud",
     "tier": "minor driver",
     "corr": 0.02,
-    "rank": 18
+    "rank": 18,
+    "alias": "high-value-flag signal"
   },
   "V21": {
     "selected": true,
@@ -215,7 +229,8 @@
     "direction": "higher \u2192 fraud",
     "tier": "minor driver",
     "corr": 0.04,
-    "rank": 22
+    "rank": 22,
+    "alias": "card-usage-pattern signal"
   },
   "V22": {
     "selected": true,
@@ -225,31 +240,36 @@
     "direction": "higher \u2192 fraud",
     "tier": "secondary driver",
     "corr": 0.001,
-    "rank": 10
+    "rank": 10,
+    "alias": "billing-mismatch signal"
   },
   "V23": {
     "selected": false,
     "name": "V23",
     "unit": "anonymized PCA component",
-    "kind": "pca"
+    "kind": "pca",
+    "alias": "authorization-history signal"
   },
   "V24": {
     "selected": false,
     "name": "V24",
     "unit": "anonymized PCA component",
-    "kind": "pca"
+    "kind": "pca",
+    "alias": "merchant-category signal"
   },
   "V25": {
     "selected": false,
     "name": "V25",
     "unit": "anonymized PCA component",
-    "kind": "pca"
+    "kind": "pca",
+    "alias": "refund / chargeback signal"
   },
   "V26": {
     "selected": false,
     "name": "V26",
     "unit": "anonymized PCA component",
-    "kind": "pca"
+    "kind": "pca",
+    "alias": "peer-comparison signal"
   },
   "V27": {
     "selected": true,
@@ -259,13 +279,15 @@
     "direction": "higher \u2192 fraud",
     "tier": "minor driver",
     "corr": 0.018,
-    "rank": 14
+    "rank": 14,
+    "alias": "long-tail-behavior signal"
   },
   "V28": {
     "selected": false,
     "name": "V28",
     "unit": "anonymized PCA component",
-    "kind": "pca"
+    "kind": "pca",
+    "alias": "residual-risk signal"
   },
   "Amount": {
     "selected": false,
