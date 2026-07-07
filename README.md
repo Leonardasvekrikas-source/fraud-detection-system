@@ -132,6 +132,11 @@ fraud-detect train --save artifacts/       # train once and persist a servable m
 each gets the right explainer: a fast, exact SHAP `TreeExplainer` for the gradient-boosted
 component, and model-agnostic LIME for the black-box LSTM.*
 
+![Architecture — decision-level fusion of LightGBM + LSTM, each with its own explainer (SHAP for the tree, LIME for the LSTM); the summed probability gives a Normal / Fraud / Expert-Checking verdict](docs/architecture.png)
+
+<details>
+<summary>Diagram source (Mermaid)</summary>
+
 ```mermaid
 flowchart TD
     A["Raw transaction"] --> B["dedup + F2Vote<br/>feature selection"]
@@ -151,6 +156,8 @@ flowchart TD
     class FR fraud
     class E expert
 ```
+
+</details>
 
 **Two serving builds** — the same FastAPI app, sized for the job:
 
@@ -174,6 +181,11 @@ docker run -p 7860:7860 fraud-demo-fusion
 
 **Production loop (Phase 3):** retrain only when a challenger beats the live champion.
 
+![Retraining loop — ingest, train a candidate, evaluate on holdout, and promote only if it beats the live champion; an Evidently drift monitor triggers ingestion](docs/retraining-loop.png)
+
+<details>
+<summary>Diagram source (Mermaid)</summary>
+
 ```mermaid
 flowchart LR
     I["ingest"] --> T["train_candidate"] --> V["evaluate_candidate<br/>(holdout)"] --> D{"beats champion?"}
@@ -181,6 +193,8 @@ flowchart LR
     D -->|no| K["keep champion"]
     M["Evidently drift monitor"] -. "drift detected → trigger" .-> I
 ```
+
+</details>
 
 ---
 
