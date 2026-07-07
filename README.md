@@ -11,6 +11,7 @@
 **Live demo:** https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo — paste a transaction; **both** models score it (LightGBM + LSTM), you get the fused *Normal / Fraud / Expert-Checking* verdict and **two** explanations side by side: SHAP for the tree, LIME for the LSTM.
 **Write-up:** [docs/WRITEUP.md](docs/WRITEUP.md) — the full story: reproduction, the fusion study, shipping it, and the MLOps loop.
 **Walkthrough:** a 2-minute narrated tour of the demo and the engineering — see [Walkthrough](#walkthrough) below.
+**Based on:** an independent reproduction and extension of **Yousefimehr & Ghatee (2025)**, [*A distribution-preserving method combined with LightGBM-LSTM for sequence-wise fraud detection*](https://doi.org/10.1016/j.eswa.2024.125661) (*Expert Systems with Applications*) — full reference under [Citation](#citation).
 
 ## Highlights
 
@@ -243,6 +244,32 @@ experiments/       Phase 2 — MLflow fusion / cost-threshold / PaySim studies +
 monitoring/        Phase 3 — Evidently drift monitoring (simulated)
 airflow/           Phase 3 — champion/challenger retraining DAG (docker-compose)
 ```
+
+---
+
+## Citation
+
+This project is an independent reproduction and extension of the method introduced in:
+
+> Yousefimehr, B., & Ghatee, M. (2025). A distribution-preserving method for resampling combined
+> with LightGBM-LSTM for sequence-wise fraud detection in credit card transactions. *Expert Systems
+> with Applications, 262*, 125661. https://doi.org/10.1016/j.eswa.2024.125661
+
+```bibtex
+@article{yousefimehr2025distribution,
+  title     = {A distribution-preserving method for resampling combined with {LightGBM-LSTM} for sequence-wise fraud detection in credit card transactions},
+  author    = {Yousefimehr, Behnam and Ghatee, Mehdi},
+  journal   = {Expert Systems with Applications},
+  volume    = {262},
+  pages     = {125661},
+  year      = {2025},
+  doi       = {10.1016/j.eswa.2024.125661},
+  publisher = {Elsevier}
+}
+```
+
+For how this work extends the source method, see
+[What's mine vs. what's from the literature](#whats-mine-vs-whats-from-the-literature) above.
 
 ---
 

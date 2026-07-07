@@ -186,3 +186,11 @@ Over-engineering would undercut the point.
 
 **Explore it:** [live demo](https://huggingface.co/spaces/Leonardasvekrikas-source/fraud-detection-demo)
 · [code + experiments](https://github.com/Leonardasvekrikas-source/fraud-detection-system)
+
+---
+
+## Reference
+
+Yousefimehr, B., & Ghatee, M. (2025). A distribution-preserving method for resampling combined with
+LightGBM-LSTM for sequence-wise fraud detection in credit card transactions. *Expert Systems with
+Applications, 262*, 125661. https://doi.org/10.1016/j.eswa.2024.125661
