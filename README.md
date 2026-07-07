@@ -28,7 +28,8 @@
 
 ## Walkthrough
 
-<!-- WALKTHROUGH_VIDEO_URL -->
+https://github.com/user-attachments/assets/dbf00ddb-f8bd-488b-8f39-7c1ccff55461
+
 *A 2-minute narrated tour — scoring a fraud, the Expert-Checking case where the two models disagree, and the engineering behind it.*
 
 
