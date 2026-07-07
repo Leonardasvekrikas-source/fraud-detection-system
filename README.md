@@ -33,6 +33,8 @@ https://github.com/user-attachments/assets/dbf00ddb-f8bd-488b-8f39-7c1ccff55461
 
 *A 2-minute narrated tour — scoring a fraud, the Expert-Checking case where the two models disagree, and the engineering behind it.*
 
+*The hybrid LightGBM-LSTM method demonstrated here is from **Yousefimehr & Ghatee (2025)**; this project is an independent reproduction and extension — full [Citation](#citation) below.*
+
 
 ## The argument
 
