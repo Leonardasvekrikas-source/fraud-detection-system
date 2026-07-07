@@ -46,3 +46,6 @@ env/
 Thumbs.db
 .idea/
 .vscode/
+
+# Walkthrough videos (host externally / GitHub assets, never commit — too big)
+*.mp4
