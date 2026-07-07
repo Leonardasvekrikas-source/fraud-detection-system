@@ -33,7 +33,9 @@ https://github.com/user-attachments/assets/dbf00ddb-f8bd-488b-8f39-7c1ccff55461
 *A 2-minute narrated tour — scoring a fraud, the Expert-Checking case where the two models disagree, and the engineering behind it.*
 
 
-**The argument (two sentences).** A *decision-level* fusion of LightGBM and LSTM — keeping the
+## The argument
+
+A *decision-level* fusion of LightGBM and LSTM — keeping the
 two models separate and combining their scores — is the more practical production choice than
 *feature-level* fusion for this problem: it is simpler, lower-latency, and stays explainable
 because the models remain separable (fast SHAP `TreeExplainer` on the gradient-boosted
@@ -89,11 +91,9 @@ where the LSTM under-performs).
 > the thesis exactly (deterministic, seed 42). A fresh LSTM re-run gave F1 0.743 / AUC 0.951 /
 > precision 0.916 / recall 0.643 — within LSTM run-to-run noise of the thesis figures shown
 > (AUC matches to 0.002); LSTM training is seed-fixed but not bit-reproducible across TensorFlow
-> versions. The documented `HybridUS` edge case fires as expected (distribution-protected
-> normals exceed the undersampling budget, so the LSTM trains near the original imbalance).
-> The LSTM's lower recall traces to a documented `HybridUS` edge case under extreme imbalance
-> (the undersampling budget is exhausted by distribution-protected samples), not an
-> implementation error — see [`docs/`](docs/).
+> versions. The LSTM's lower recall traces to a documented `HybridUS` edge case under extreme
+> imbalance — distribution-protected normals exhaust the undersampling budget, so the LSTM trains
+> near the original imbalance — not an implementation error (see [`docs/`](docs/)).
 
 ---
 
@@ -103,8 +103,8 @@ Requires **Python 3.12**.
 
 ```bash
 # 1. Clone
-git clone <repo-url>
-cd "Fraud detection system"
+git clone https://github.com/Leonardasvekrikas-source/fraud-detection-system.git
+cd fraud-detection-system
 
 # 2. Install (editable). Add extras as needed:
 #      [dev]  tests+lint   [lstm]  TensorFlow for Subsystem 2 / full-fusion training
@@ -224,10 +224,10 @@ src/fraud_detection/
   artifacts/       Save/load fitted model + scaler + F2Vote mask
   cli.py           `fraud-detect train | evaluate`
 tests/             pytest suite for the pure-logic modules
-serving/      Phase 1 — FastAPI + SHAP demo (deployed to Hugging Face Spaces)
-experiments/  Phase 2 — MLflow fusion / cost-threshold / PaySim studies + results
-monitoring/   Phase 3 — Evidently drift monitoring (simulated)
-airflow/      Phase 3 — champion/challenger retraining DAG (docker-compose)
+serving/           Phase 1 — FastAPI + SHAP/LIME demo (deployed to Hugging Face Spaces)
+experiments/       Phase 2 — MLflow fusion / cost-threshold / PaySim studies + results
+monitoring/        Phase 3 — Evidently drift monitoring (simulated)
+airflow/           Phase 3 — champion/challenger retraining DAG (docker-compose)
 ```
 
 ---
